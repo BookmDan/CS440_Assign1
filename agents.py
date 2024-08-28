@@ -191,7 +191,8 @@ def rule_match(state, rules):
 # ______________________________________________________________________________
 
 
-loc_A, loc_B = (0, 0), (1, 0)  # The two locations for the Vacuum world
+loc_A, loc_B = (0, 0), (0,1),
+loc_C, loc_D = (1,0), (1, 1)
 
 
 def RandomVacuumAgent():
@@ -203,7 +204,7 @@ def RandomVacuumAgent():
     >>> environment.status == {(1,0):'Clean' , (0,0) : 'Clean'}
     True
     """
-    return Agent(RandomAgentProgram(['Right', 'Left', 'Suck', 'NoOp']))
+    return Agent(RandomAgentProgram(['Up', 'Down', 'Right', 'Left', 'Suck', 'NoOp']))
 
 
 def TableDrivenVacuumAgent():
@@ -215,16 +216,28 @@ def TableDrivenVacuumAgent():
     >>> environment.status == {(1,0):'Clean' , (0,0) : 'Clean'}
     True
     """
-    table = {((loc_A, 'Clean'),): 'Right',
-             ((loc_A, 'Dirty'),): 'Suck',
-             ((loc_B, 'Clean'),): 'Left',
-             ((loc_B, 'Dirty'),): 'Suck',
-             ((loc_A, 'Dirty'), (loc_A, 'Clean')): 'Right',
-             ((loc_A, 'Clean'), (loc_B, 'Dirty')): 'Suck',
-             ((loc_B, 'Clean'), (loc_A, 'Dirty')): 'Suck',
-             ((loc_B, 'Dirty'), (loc_B, 'Clean')): 'Left',
-             ((loc_A, 'Dirty'), (loc_A, 'Clean'), (loc_B, 'Dirty')): 'Suck',
-             ((loc_B, 'Dirty'), (loc_B, 'Clean'), (loc_A, 'Dirty')): 'Suck'}
+    table = {
+            # Single perception
+            ((loc_A, 'Dirty'),): 'Suck',
+            ((loc_A, 'Clean'),): 'Right',
+            ((loc_B, 'Dirty'),): 'Suck',
+            ((loc_B, 'Clean'),): 'Down',
+            ((loc_C, 'Dirty'),): 'Suck',
+            ((loc_C, 'Clean'),): 'Up',
+            ((loc_D, 'Dirty'),): 'Suck',
+            ((loc_D, 'Clean'),): 'Left',
+
+            # Two perceptions
+            ((loc_A, 'Dirty'), (loc_B, 'Clean')): 'Suck', 
+            ((loc_A, 'Clean'), (loc_B, 'Dirty')): 'Right', 
+            ((loc_A, 'Dirty'), (loc_C, 'Clean')): 'Down',  
+            ((loc_A, 'Clean'), (loc_C, 'Dirty')): 'Suck',  
+            ((loc_B, 'Dirty'), (loc_D, 'Clean')): 'Down',  
+            ((loc_B, 'Clean'), (loc_D, 'Dirty')): 'Suck',  
+            ((loc_C, 'Dirty'), (loc_A, 'Clean')): 'Up',    
+            ((loc_C, 'Clean'), (loc_D, 'Dirty')): 'Suck',  
+            ((loc_D, 'Dirty'), (loc_B, 'Clean')): 'Up',
+            ((loc_D, 'Clean'), (loc_B, 'Dirty')): 'Suck', }
     return Agent(TableDrivenAgentProgram(table))
 
 
@@ -247,8 +260,11 @@ def ReflexVacuumAgent():
         elif location == loc_A:
             return 'Right'
         elif location == loc_B:
+            return 'Down'
+        elif location == loc_C:
+            return 'Up'
+        elif location == loc_D:
             return 'Left'
-
     return Agent(program)
 
 
@@ -261,21 +277,30 @@ def ModelBasedVacuumAgent():
     >>> environment.status == {(1,0):'Clean' , (0,0) : 'Clean'}
     True
     """
-    model = {loc_A: None, loc_B: None}
+    model = {loc_A: None, loc_B: None, loc_C: None, loc_D: None}
+    current_location = loc_A
 
     def program(percept):
         """Same as ReflexVacuumAgent, except if everything is clean, do NoOp."""
         location, status = percept
         model[location] = status  # Update the model here
-        if model[loc_A] == model[loc_B] == 'Clean':
+
+        if model[loc_A] == model[loc_B] == model[loc_C] == model[loc_D] == 'Clean':
             return 'NoOp'
         elif status == 'Dirty':
             return 'Suck'
-        elif location == loc_A:
+        elif current_location == loc_A:
+            current_location = loc_B
             return 'Right'
-        elif location == loc_B:
+        elif current_location == loc_B:
+            current_location = loc_D
+            return 'Down'
+        elif current_location == loc_C:
+            current_location = loc_A
+            return 'Up'
+        elif current_location == loc_D:
+            current_location = loc_C
             return 'Left'
-
     return Agent(program)
 
 
@@ -773,7 +798,9 @@ class TrivialVacuumEnvironment(Environment):
     def __init__(self):
         super().__init__()
         self.status = {loc_A: random.choice(['Clean', 'Dirty']),
-                       loc_B: random.choice(['Clean', 'Dirty'])}
+                       loc_B: random.choice(['Clean', 'Dirty']),
+                       loc_C: random.choice(['Clean', 'Dirty']),
+                       loc_D: random.choice(['Clean', 'Dirty'])}
 
     def thing_classes(self):
         return [Wall, Dirt, ReflexVacuumAgent, RandomVacuumAgent, TableDrivenVacuumAgent, ModelBasedVacuumAgent]
@@ -786,19 +813,38 @@ class TrivialVacuumEnvironment(Environment):
         """Change agent's location and/or location's status; track performance.
         Score 10 for each dirt cleaned; -1 for each move."""
         if action == 'Right':
-            agent.location = loc_B
-            agent.performance -= 1
+            if agent.location == loc_A:
+                agent.location = loc_B
+            elif agent.location == loc_C:
+                agent.location = loc_D
         elif action == 'Left':
-            agent.location = loc_A
-            agent.performance -= 1
+            if agent.location == loc_B:
+                agent.location = loc_A
+            elif agent.location == loc_D:
+                agent.location = loc_C
+        elif action == 'Up':
+            if agent.location == loc_C:
+                agent.location = loc_A
+            elif agent.location == loc_D:
+                agent.location = loc_B
+        elif action == 'Down':
+            if agent.location == loc_A:
+                agent.location = loc_C
+            elif agent.location == loc_B:
+                agent.location = loc_D
         elif action == 'Suck':
             if self.status[agent.location] == 'Dirty':
                 agent.performance += 10
             self.status[agent.location] = 'Clean'
+        
+        # Deduct points for each move action
+        if action in ['Right', 'Left', 'Up', 'Down']:
+            agent.performance -= 1
+
 
     def default_location(self, thing):
         """Agents start in either location at random."""
-        return random.choice([loc_A, loc_B])
+        return random.choice([loc_A, loc_B, loc_C, loc_D])
 
 
 # ______________________________________________________________________________
