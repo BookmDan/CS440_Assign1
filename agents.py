@@ -278,9 +278,8 @@ def ModelBasedVacuumAgent():
     True
     """
     model = {loc_A: None, loc_B: None, loc_C: None, loc_D: None}
-    current_location = loc_A
 
-     def program(percept):
+    def program(percept):
         """Same as ReflexVacuumAgent, except if everything is clean, do NoOp."""
         location, status = percept
         model[location] = status  # Update the model here
