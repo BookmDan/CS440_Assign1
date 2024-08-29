@@ -67,8 +67,7 @@ The RandomVacuumAgent selects actions randomly from the possible moves ('Up', 'D
 
 2. Table-Driven Agent
 
-    The TableDrivenVacuumAgent uses a predefined percept-action table that includes all possible states for a 2x2 grid, up to 2 percepts. 
-    We decided to go with up to 2 percepts as this is a simple demonstration assignment. 
+    The TableDrivenVacuumAgent uses the last known percept-action to determine its next action. Therefore, we needed only the 1 percept for the table to successfully     run as expected. 
 
 3. Simple Reflex Agent
 
