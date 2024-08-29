@@ -17,7 +17,7 @@ https://github.com/aimacode/aima-python.git
 cd aima-python
 ```
 2. Set up a virtual environment and install dependencies:
-*note: running these commands in termainl rather than vscode terminal seems to work better. 
+*note: running these commands in terminal rather than vscode terminal seems to work better. 
 Also, restart VScode if certain packages like ipykernel or numpy don't seem to be installed even though already installed. 
 ```
 python3 -m venv .venv
