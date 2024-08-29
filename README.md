@@ -67,14 +67,15 @@ The RandomVacuumAgent selects actions randomly from the possible moves ('Up', 'D
 
 2. Table-Driven Agent
 
-    The TableDrivenVacuumAgent uses a predefined percept-action table that includes all possible states for a 2x2 grid.
+    The TableDrivenVacuumAgent uses a predefined percept-action table that includes all possible states for a 2x2 grid, up to 2 percepts. 
+    We decided to go with up to 2 percepts as this is a simple demonstration assignment. 
 
 3. Simple Reflex Agent
 
 The SimpleReflexVacuumAgent acts based on condition-action rules:
 
     Cleans a dirty cell.
-    Moves to adjacent cells according to a fixed sequence.
+    Moves to adjacent cells according to a fixed sequence, which we determined would be a clockwise motion i.e. A -> B -> D -> C. 
 
 4. Model-Based Reflex Agent
 
