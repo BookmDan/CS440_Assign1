@@ -227,25 +227,7 @@ def TableDrivenVacuumAgent():
             ((loc_D, 'Dirty'),): 'Suck',
             ((loc_D, 'Clean'),): 'Left',
 
-            # Two perceptions
-            ((loc_A, 'Dirty'), (loc_A, 'Clean')): 'Right', 
-            ((loc_A, 'Clean'), (loc_B, 'Dirty')): 'Suck', 
-            ((loc_B, 'Clean'), (loc_D, 'Dirty')): 'Suck',
-            ((loc_B, 'Dirty'), (loc_B, 'Clean')): 'Down',
-            ((loc_D, 'Dirty'), (loc_D, 'Clean')): 'Left',
-            ((loc_D, 'Dirty'), (loc_C, 'Clean')): 'Suck',
-            ((loc_C, 'Dirty'), (loc_C, 'Clean')): 'Up',
-            ((loc_C, 'Dirty'), (loc_A, 'Clean')): 'Suck',
-        
-            
-            ((loc_A, 'Dirty'), (loc_C, 'Clean')): 'Up',  
-            ((loc_A, 'Clean'), (loc_C, 'Dirty')): 'Suck',  
-            ((loc_B, 'Dirty'), (loc_D, 'Clean')): 'Up',  
-            ((loc_B, 'Clean'), (loc_D, 'Dirty')): 'Suck',  
-            ((loc_C, 'Dirty'), (loc_A, 'Clean')): 'Down',    
-            ((loc_C, 'Clean'), (loc_D, 'Dirty')): 'Suck',  
-            ((loc_D, 'Dirty'), (loc_B, 'Clean')): 'Down',
-            ((loc_D, 'Clean'), (loc_B, 'Dirty')): 'Suck', }
+    }
     return Agent(TableDrivenAgentProgram(table))
 
 
