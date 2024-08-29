@@ -79,7 +79,7 @@ The SimpleReflexVacuumAgent acts based on condition-action rules:
 
 4. Model-Based Reflex Agent
 
-The ModelBasedReflexAgent maintains an internal model of the environment and updates it based on percepts. It chooses actions to clean all dirty cells efficiently.
+The ModelBasedReflexAgent will attempt to clean its cell if it is dirty. If its adjacent cell is dirty, it will move to it to clean it.  The agent maintains an internal model of the environment and updates it based on percepts. It chooses actions to clean all dirty cells efficiently.
 
 # Acknowledgements
 We used https://github.com/aimacode/aima-python as a starting reference point. 
