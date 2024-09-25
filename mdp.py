@@ -10,7 +10,6 @@ and policy_iteration algorithms.
 
 import random
 from collections import defaultdict
-
 import numpy as np
 
 from utils import vector_add, orientations, turn_right, turn_left
